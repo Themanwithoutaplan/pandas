@@ -1446,6 +1446,50 @@ class _Openpyxl22Writer(_Openpyxl20Writer):
 register_writer(_Openpyxl22Writer)
 
 
+class _Openpyxl24Writer(ExcelWriter):
+
+    engine = 'openpyxl1'
+    supported_extensions = ('.xlsx', '.xlsm')
+    openpyxl_majorver = 2
+
+    def __init__(self, path, engine=None, **engine_kwargs):
+        if not openpyxl_compat.is_compat(major_ver=self.openpyxl_majorver):
+            raise ValueError('Installed openpyxl is not supported at this '
+                             'time. Use {majorver}.x.y.'
+                             .format(majorver=self.openpyxl_majorver))
+        # Use the openpyxl module as the Excel writer.
+        from openpyxl.workbook import Workbook
+
+        write_only = engine_kwargs.pop("write_only") or True
+        super(_Openpyxl1Writer, self).__init__(path, **engine_kwargs)
+
+        # Create workbook object in write-only mode by default
+        self.book = Workbook(write_only=write_only)
+
+        ## Openpyxl 1.6.1 adds a dummy sheet. We remove it.
+        #if self.book.worksheets:
+            #try:
+                #self.book.remove(self.book.worksheets[0])
+            #except AttributeError:
+
+                ## compat
+                #self.book.remove_sheet(self.book.worksheets[0])
+
+    def save(self):
+        """
+        Save workbook to disk.
+        """
+        return self.book.save(self.path)
+
+
+    def write_cells(self, cells, sheet_name=None, startrow=0, startcol=0,
+                    freeze_panes=None):
+        pass
+
+
+register_writer(_Openpyxl24Writer)
+
+
 class _XlwtWriter(ExcelWriter):
     engine = 'xlwt'
     supported_extensions = ('.xls',)
