@@ -2218,6 +2218,21 @@ class TestOpenpyxl22Tests(ExcelWriterBase):
             assert xcell_a2.font == openpyxl_sty_merged
 
 
+def skip_openpyxl_lt24(cls):
+    """Skip test case if openpyxl < 2.4"""
+
+    @classmethod
+    def setup_class(cls):
+        _skip_if_no_openpyxl()
+        import openpyxl
+        ver = openpyxl.__version__
+        if LooseVersion(ver) < LooseVersion('2.4.0'):
+            pytest.skip("openpyxl {0} < 2.4".format(ver))
+
+    cls.setup_class = setup_class
+    return cls
+
+
 @raise_on_incompat_version(2)
 @skip_openpyxl_lt24
 class TestOpenpyxl24Tests(ExcelWriterBase):

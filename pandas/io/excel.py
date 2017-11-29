@@ -1448,7 +1448,7 @@ register_writer(_Openpyxl22Writer)
 
 class _Openpyxl24Writer(ExcelWriter):
 
-    engine = 'openpyxl1'
+    engine = 'openpyxl24'
     supported_extensions = ('.xlsx', '.xlsm')
     openpyxl_majorver = 2
 
@@ -1460,8 +1460,8 @@ class _Openpyxl24Writer(ExcelWriter):
         # Use the openpyxl module as the Excel writer.
         from openpyxl.workbook import Workbook
 
-        write_only = engine_kwargs.pop("write_only") or True
-        super(_Openpyxl1Writer, self).__init__(path, **engine_kwargs)
+        write_only = engine_kwargs.pop("write_only", True)
+        super(_Openpyxl24Writer, self).__init__(path, **engine_kwargs)
 
         # Create workbook object in write-only mode by default
         self.book = Workbook(write_only=write_only)
@@ -1484,6 +1484,8 @@ class _Openpyxl24Writer(ExcelWriter):
 
     def write_cells(self, cells, sheet_name=None, startrow=0, startcol=0,
                     freeze_panes=None):
+        from openpyxl.utils.dataframe import dataframe_to_rows
+        from openpyxl.styles.builtins import pandas_highlight
         pass
 
 
